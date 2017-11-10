@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>silex_openC - Home</title>
+        {# Bootstrap #}
+        <link href=" {{ asset('/lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        {# la fonction asset() de Symfony permet de charger les fichiers #}
+        <link rel="stylesheet" href="{{ asset('/css/microcms.css') }}"/>
+    </head>
+    <body>
+        <div class="container">
+            <nav class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-target">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="">Silex by Mila</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbar-collapse-target">
+                    </div>
+                </div><!-- /.container -->
+            </nav>
+        </div>
+        <!-- /.container -->
+
+        <header>
+            <h1>silex_openC by Mila</h1>
+        </header>
+        {% for article in articles %}
+            {#  la boucle for parcourt le tableau $articles #}
+            <article>
+                {# l'instruction article.title fait appel à la méthode getTitle de l'objet $article dans src/Domain/Article.php #}
+                <h2> {{ article.title }} </h2>
+                <p> {{ article.content }} </p>
+            </article>
+        {% endfor %}
+        <footer class="footer">
+            <a href="https://github.com/bpesquet/OC-MicroCMS">MicroCMS</a> is a minimalistic CMS built as a showcase for modern PHP development.
+        </footer>
+
+
+        {# jQuery (necessary for Bootstrap's JavaScript plugins) #}
+        <script src="{{ asset('/lib/jquery/jquery.min.js') }}"></script>
+        {# Include all compiled plugins (below), or include individual files as needed #}
+        <script src="{{ asset('/lib/bootstrap/js/bootstrap.min.js') }}"></script>
+    </body>
+</html>

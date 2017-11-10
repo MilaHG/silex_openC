@@ -5,9 +5,13 @@ require_once __DIR__ . '/../vendor/autoload.php';
 $app = new Silex\Application();
 
 // enable the debug mode
-$app['debug'] = true;
+//$app['debug'] = true;
 
+require __DIR__ . '/../app/config/dev.php';
+require __DIR__ . '/../app/app.php';
 require __DIR__ . '/../app/routes.php';
+require __DIR__ . '/../src/DAO/ArticleDAO.php'; //rajout par rapport à version OpenC
+require __DIR__ . '/../src/Domain/Article.php'; //rajout par rapport à version OpenC{
 
 $app->run();
 
@@ -17,5 +21,5 @@ $app->run();
  * Dans ce fichier:
  * - on instancie l'objet Silex principal $app,
  * - on active les informations de débogage
- * - puis on inclut la définition des routes de l'application (fichierroutes.php).‌
+ * - puis on inclut la définition des routes de l'application (fichier routes.php).‌
  */

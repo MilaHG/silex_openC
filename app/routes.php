@@ -1,14 +1,28 @@
 <?php
 
 // Home page
-$app->get('/', function () {
-    require '../src/model.php';
-    $articles = getArticles();
+$app->get('/', function () use ($app) {
+    $articles = $app['dao.article']->findAll();
 
-    ob_start();             // start buffering HTML output
-    require '../views/view.php';
-    $view = ob_get_clean(); // assign HTML output to $view
-    return $view;
+    /* ob_start();             // start buffering HTML output
+      require '../views/view.php';
+      $view = ob_get_clean(); // assign HTML output to $view
+      return $view; */
+
+    return $app['twig']->render('index.html.twig', ['articles' => $articles]);
+    /**
+     * on demande au service Twig
+     * ($app['twig'] ) de générer le
+     * template index.html.twig en lui
+     * passant ses données dynamiques en
+     * paramètre.
+     * Ici, la seule donnée dynamique
+     * est une variable nomméearticles qui
+     * contient le tableau d'objets de la
+     * classe Article renvoyé par la partie
+     * Modèle.
+     *
+     */
 });
 
 
@@ -20,4 +34,17 @@ $app->get('/', function () {
  * définie dans le fichier model.php pour récupérer la liste des articles.
  *
  * Une fonction qui gère une route est appelée un contrôleur.
+ */
+
+/**
+ * L'appel à la fonction getArticles est remplacé par
+ * l'utilisation du service dao.article enregistré dans
+ * app/app.php. L'appel à $app['dao.article'] renvoie un
+ * objet de la classe ArticleDAO dont on utilise ensuite
+ * la méthodefindAll pour récupérer la liste des articles.
+ */
+
+/**
+ * Ce contrôleur a maintenant besoin de l'objet application
+ * Silex $app, d'où l'ajout du use($app) dans sa définition.
  */
