@@ -10,8 +10,11 @@ $app = new Silex\Application();
 require __DIR__ . '/../app/config/dev.php';
 require __DIR__ . '/../app/app.php';
 require __DIR__ . '/../app/routes.php';
+require __DIR__ . '/../src/DAO/DAO.php';
 require __DIR__ . '/../src/DAO/ArticleDAO.php'; //rajout par rapport à version OpenC
 require __DIR__ . '/../src/Domain/Article.php'; //rajout par rapport à version OpenC{
+require __DIR__ . '/../src/DAO/CommentDAO.php';
+require __DIR__ . '/../src/Domain/Comment.php';
 
 $app->run();
 

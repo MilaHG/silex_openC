@@ -1,5 +1,10 @@
 <?php
 
+use Silex\Provider\AssetServiceProvider;
+use Silex\Provider\DoctrineServiceProvider;
+use Silex\Provider\TwigServiceProvider;
+use silex_openC\src\DAO\ArticleDAO;
+use silex_openC\src\DAO\CommentDAO;
 use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
 
@@ -12,8 +17,8 @@ ErrorHandler::register();
 ExceptionHandler::register();
 
 // Register service providers.
-$app->register(new Silex\Provider\DoctrineServiceProvider()); // Doctrine
-$app->register(new Silex\Provider\TwigServiceProvider(), ['twig.path' => __DIR__ . '/../views',
+$app->register(new DoctrineServiceProvider()); // Doctrine
+$app->register(new TwigServiceProvider(), ['twig.path' => __DIR__ . '/../views',
 ]); // Twig
 /*
  * Twig est configuré pour que le répertoire
@@ -23,9 +28,15 @@ $app->register(new Silex\Provider\TwigServiceProvider(), ['twig.path' => __DIR__
  * automatiquement lors de l'enregistrement
  * du fournisseur TwigServiceProvider.
  */
-$app->register(new Silex\Provider\AssetServiceProvider(), ['assets.version' => 'v1'
+$app->register(new AssetServiceProvider(), ['assets.version' => 'v1'
 ]);
-// Register services.
+// Register services for the articles
 $app['dao.article'] = function ($app) {
-    return new silex_openC\src\DAO\ArticleDAO($app['db']);
+    return new ArticleDAO($app['db']);
+};
+// Register services for the comments
+$app['dao.comment'] = function ($app) {
+    $commentDAO = new CommentDAO($app['db']);
+    $commentDAO->setArticleDAO($app['dao.article']);
+    return $commentDAO;
 };
