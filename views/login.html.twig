@@ -1,0 +1,39 @@
+{# fichier lié à la route d'authentification #}
+{% extends "layout.html.twig" %}
+
+{% block title %}Identification utilisateur{% endblock %}
+
+{% block content %}
+    <h2 class="text-center"> {{ block('title') }} </h2>
+    {% if error %}
+        <div class="alert alert-danger">
+            <strong>Login non réussi</strong> {{ error }}
+        </div>
+    {% endif %}
+
+    <div class="well">
+        <form action="{{ path('login_check') }}" class="form-signin form-horizontal" role="form" method="post">
+            {#            div.form-group>div.col-sm-6.col-sm-offset-3.col-md-4.col-md-offset-4>input.form-control[type="text" name="_username" value="{{ last_username }}" placeholder="Entrer votre nom d'utilisateur" required autofocus]#}
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+                    <input type="text" class="form-control" name="_username" value="{{ last_username }}" placeholder="Entrer votre nom d'utilisateur" required="" autofocus="">
+                </div>
+            </div>
+            {#                div.form-group>div.col-sm-6.col-sm-offset-3.col-md-4.col-md-offset-4>input.form-control[type="password" name="_password" placeholder="Entrer votre mot de passe" required]#}
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+                    <input type="password" class="form-control" name="_password" placeholder="Entrer votre mot de passe" required="">
+                </div>
+            </div>
+            {#            div.form-group>div.col-sm-6.col-sm-offset-3.col-md-4.col-md-offset-4>button.btn.btn-default.btn-primary.btn-block[type="submit"]>span.glyphicon.glyphicon-log-in#}
+            <div class="form-group">
+                <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+                    <button class="btn btn-default btn-primary btn-block" type="submit">
+                        <span class="glyphicon glyphicon-log-in"></span> Login
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}

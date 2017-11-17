@@ -6,11 +6,42 @@
     <p>
     <h2>{{ article.title }}</h2>
     <p>{{ article.content }}</p>
-    <h3>Comments</h3>
+
+    <h3>Commentaires</h3>
     {% for comment in comments %}
-        <strong>{{ comment.author }}</strong> a écrit : {{ comment.content }}<br>
+        <strong>{{ comment.author.username }}</strong> a écrit : {{ comment.content }}<br>
     {% else %}
-        Aucun commentaire n'a été fait.
+        Aucun commentaire n'a été soumis.
     {% endfor %}
+
+    <h3>Ajouter un commentaire</h3>
+    {#  si le formulaire existe (utilisateur authentifié)  #}
+    {% if commentForm %}
+        {#    on le génère avec form_start    #}
+        {{ form_start(commentForm) }}
+        <div class="form-group">
+            {{ form_errors(commentForm.content) }}
+            {#      form_widget génère un champ de formulaire /!\ les formulaires générés par Symfony ont tous leurs champs obligatoires     #}
+            {{ form_widget(commentForm.content, {'attr': {
+                'rows': '4',
+                'class': 'form-control',
+                'placeholder': 'Rédigez votre commentaire'
+            }}) }}
+        </div>
+        {#        div.form-group>input.btn.btn-primary[type="submit" value="Publier"]#}
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Publier">
+        </div>
+        {{ form_end(commentForm) }}
+        {% for flashMessage in app.session.flashbag.get('success') %}
+            <div class="alert alert-success">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+
+    {% else %}
+        <a href="{{ path('login') }} ">Log in</a> to add comments.
+    {% endif %}
+
 </p>
 {% endblock %}

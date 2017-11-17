@@ -11,8 +11,35 @@ class CommentDAO extends DAO {
      */
     private $articleDAO;
 
+    /**
+     * @var \silex_openC\src\DAO\UserDAO
+     */
+    private $userDAO;
+
     public function setArticleDAO(ArticleDAO $articleDAO) {
         $this->articleDAO = $articleDAO;
+    }
+
+    public function setUserDAO(UserDAO $userDAO) {
+        $this->userDAO = $userDAO;
+    }
+
+    /**
+     * Returns a list of all comments, sorted by date (most recent first) - for the Admin
+     *
+     * @param array A list of all comments
+     */
+    public function findAll() {
+        $sql = "SELECT * FROM t_comment ORDER BY com_id DESC";
+        $result = $this->getDb()->fetchAll($sql);
+
+        // Convert query result in an array of domain objects
+        $entities = array();
+        foreach ($result as $row) {
+            $id = $row['com_id'];
+            $entities[$id] = $this->buildDomainObject($row);
+        }
+        return $entities;
     }
 
     /**
@@ -31,7 +58,7 @@ class CommentDAO extends DAO {
 
         // art_id is not selected by the SQL query
         // the article will not be retrieved during domain object construction
-        $sql = "SELECT com_id, com_content, com_author FROM t_comment WHERE art_id=? ORDER BY com_id";
+        $sql = "SELECT com_id, com_content, usr_id FROM t_comment WHERE art_id=? ORDER BY com_id";
         $result = $this->getDb()->fetchAll($sql, [$articleId]);
 
         // convert query result to an array of domain objects
@@ -58,7 +85,6 @@ class CommentDAO extends DAO {
         $comment = new Comment();
         $comment->setId($row['com_id']);
         $comment->setContent($row['com_content']);
-        $comment->setAuthor($row['com_author']);
 
         if (array_key_exists('art_id', $row)) {
             // find and set the associated article
@@ -77,6 +103,12 @@ class CommentDAO extends DAO {
              * SQL et améliore donc les
              * performances de l'application.
              */
+        }
+        if (array_key_exists('usr_id', $row)) {
+            // find and set the associated user
+            $userId = $row['usr_id'];
+            $user = $this->userDAO->find($userId);
+            $comment->setAuthor($user);
         }
         return $comment;
     }
@@ -101,4 +133,30 @@ class CommentDAO extends DAO {
      * accesseur en écriture (mutateur)
      * setArticleDAO.
      */
+    // Cette méthode rassemble les valeurs BD dans le tableau$commentData, puis vérifie s'il faut insérer ou mettre à jour le commentaire en se basant sur l'existence d'une valeur pour l'identifiant du commentaire. Ensuite, elle utilise la méthode DBAL appropriée pour effectuer l'opération dans la tablet_comment.
+
+    /**
+     * Saves a comment into the database
+     *
+     * @param \silex_openC\src\Domain\Comment $comment The comment to save
+     */
+    public function save(Comment $comment) {
+        $commentData = [
+            'art_id' => $comment->getArticle()->getId(),
+            'usr_id' => $comment->getAuthor()->getId(),
+            'com_content' => $comment->getContent()
+        ];
+
+        if ($comment->getId()) {
+            // The comment has already been saved => update it
+            $this->getDb()->update('t_comment', $commentData, ['com_id' => $comment->getId()]);
+        } else {
+            // The comment has never been saved => insert it
+            $this->getDb()->insert('t_comment', $commentData);
+            // Get the id of the newly created comme,y and set it on the entity
+            $id = $this->getDb()->lastInsertId();
+            $comment->setId($id);
+        }
+    }
+
 }

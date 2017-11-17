@@ -12,9 +12,13 @@ require __DIR__ . '/../app/app.php';
 require __DIR__ . '/../app/routes.php';
 require __DIR__ . '/../src/DAO/DAO.php';
 require __DIR__ . '/../src/DAO/ArticleDAO.php'; //rajout par rapport à version OpenC
-require __DIR__ . '/../src/Domain/Article.php'; //rajout par rapport à version OpenC{
-require __DIR__ . '/../src/DAO/CommentDAO.php';
-require __DIR__ . '/../src/Domain/Comment.php';
+require __DIR__ . '/../src/Domain/Article.php'; //rajout par rapport à version OpenC
+require __DIR__ . '/../src/DAO/CommentDAO.php'; //rajout par rapport à version OpenC
+require __DIR__ . '/../src/Domain/Comment.php'; //rajout par rapport à version OpenC
+require __DIR__ . '/../src/DAO/UserDAO.php'; //rajout par rapport à version OpenC
+require __DIR__ . '/../src/Domain/User.php'; //rajout par rapport à version OpenC
+require __DIR__ . '/../src/Form/Type/CommentType.php'; //rajout par rapport à version OpenC
+
 
 $app->run();
 

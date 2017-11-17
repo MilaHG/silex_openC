@@ -14,7 +14,7 @@ class Comment {
     /**
      * Comment author
      *
-     * @var string
+     * @var \silex_openc\src\Domain\User
      */
     private $author;
 
@@ -51,7 +51,7 @@ class Comment {
     /**
      * L'association avec un article se
      * traduit dans le code source par la
-     * présence d'une propriété$article.
+     * présence d'une propriété $article.
      * Il ne s'agit pas d'un simple
      * identifiant de type entier, mais
      * bien d'un objet de la classe
@@ -62,7 +62,7 @@ class Comment {
         return $this;
     }
 
-    public function setAuthor($author) {
+    public function setAuthor(User $author) {
         $this->author = $author;
         return $this;
     }

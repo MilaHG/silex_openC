@@ -2,15 +2,16 @@
 
 // Home page
 $app->get('/', function () use ($app) {
-$articles = $app['dao.article']->findAll();
-return $app['twig']->render('index.html.twig', ['articles' => $articles])->bind('home');
+    $articles = $app['dao.article']->findAll();
+    return $app['twig']->render('index.html.twig', ['articles' => $articles]);
+})->bind('home');
 
 
 // Article details with comments
 $app->get('/article/{id}', function ($id) use ($app) {
-$article = $app['dao.article']->find($id);
-$comments = $app['dao.comment']->findAllByArticle($id);
-return $app['twig']->render('article.html.twig', ['article' => $article, 'comments' => $comments]);
+    $article = $app['dao.article']->find($id);
+    $comments = $app['dao.comment']->findAllByArticle($id);
+    return $app['twig']->render('article.html.twig', ['article' => $article, 'comments' => $comments]);
 })->bind('article');
 
 // Silex permet de définir des routes, c'est-à-dire des points d'entrée dans l'application. À chaque route est associée une réponse construite par notre code. La route ci-dessus correspond à l'URL racine de l'application (/).La fonction anonyme associée à cette route utilise la fonction getArticles définie dans le fichier model.php pour récupérer la liste des articles.Une fonction qui gère une route est appelée un contrôleur.
