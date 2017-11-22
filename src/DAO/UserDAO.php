@@ -96,6 +96,57 @@ class UserDAO extends DAO implements UserProviderInterface {
         return $user;
     }
 
+    /*
+     * Méthodes de modification et de suppression d'un utilisateur
+     * nécessaires pour rendre dynamique le formulaire d'affichage pour la gestion
+     * des utilisateurs - Partie ADMIN admin.html.twig
+     *
+     * Fichiers liés :
+     * form/UserType.php => formulaire associé à un utilisateur
+     * views/user_form.html.twig => affiche les champs du formulaire UserType.php
+     * views/admin.html.twig => formulaire d'affichage pour la gestion
+     * des utilisateurs - Partie ADMIN
+     * src/DAO/CommentDAO.php => supp tous commentaires liés à 1 utilisateur
+     * app/routes.php => contrôleurs pour ajout/modif/supp d'un utilisateur
+     */
+
+    /**
+     * Ajouter un utilisateur dans la BDD
+     *
+     * @param \silex_openC\Domain\User $user utilisateur a enregistrer
+     */
+    public function save(User $user) {
+        $userData = [
+            'usr_name' => $user->getUsername(),
+            'usr_salt' => $user->getSalt(),
+            'usr_password' => $user->getPassword(),
+            'usr_role' => $user->getRole()
+        ];
+
+        if ($user->getId()) {
+            // user déjà en BDD => le mettre à jour
+            $this->getDb()->update('t_user', $userData, [
+                'usr_id' => $user->getId()
+            ]);
+        } else {
+            // nouveau user => insertion en BDD
+            $this->getDb()->insert('t_user', $userData);
+            // recuperer dernier ID créé pour l'attribuer à celui-ci
+            $id = $this->getDb()->lastInsertId();
+            $user->setId($id);
+        }
+    }
+
+    /**
+     * Supprime un user de la BDD
+     *
+     * @param integer $id ID user
+     */
+    public function delete($id) {
+        // supprime le user
+        $this->getDb()->delete('t_user', ['usr_id' => $id]);
+    }
+
 }
 
 // Cette classe reprend la structure de nos classes DAO existantes et implémente l'interface Symfony UserProviderInterface. Cette interface contient les méthodes nécessaires pour qu'une classe puisse être utilisée comme fournisseur de données utilisateur par le composant de gestion de la sécurité de Symfony

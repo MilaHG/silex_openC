@@ -48,7 +48,7 @@ class ArticleDAO extends DAO {
      * @param array $row La ligne de la BDD contenant les données de l'Article
      * @return Article
      */
-    protected function buildDomainObject(array $row) {
+    protected function buildDomainObject(array $row) { //changé par rapport au code OpenC protected et non private
         $article = new Article();
         $article->setId($row['art_id']);
         $article->setTitle($row['art_title']);
@@ -56,5 +56,38 @@ class ArticleDAO extends DAO {
         return $article;
     }
 
-//changé par rapport au code OpenC protected et non private
+    /**
+     * Saves an article into the database
+     *
+     * @param \silex_openC\Domain\Article $article The article to save
+     */
+    public function save(Article $article) {
+        $articleData = [
+            'art_title' => $article->getTitle(),
+            'art_content' => $article->getContent()
+        ];
+
+        if ($article->getId()) {
+            // L'article existe => on le met à jour
+            $this->getDb()->update('t_article', $articleData, array('art_id' => $article->getId()));
+        } else {
+            // L'article n'existe pas => on l'insère
+            $this->getDb()->insert('t_article', $articleData);
+            // Récupère l'ID du nouvel article pour l'attribuer à cet article
+            $id = $this->getDb()->lastInsertId();
+            $article->setId($id);
+        }
+    }
+
+    /**
+     * Removes an article from the database
+     *
+     * @param integer $id The article corresponding ID
+     */
+    public function delete($id) {
+        // Suppression de l'article
+        $this->getDb()->delete('t_article', ['art_id' => $id]);
+    }
+
+// la suppression d'un article entraîne celle des commentaires associés => cf. ComentDAO.php
 }

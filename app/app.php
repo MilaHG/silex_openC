@@ -1,9 +1,5 @@
 <?php
 
-// rajout par rapport au code OpenC
-// rajout par rapport au code OpenC
-// rajout par rapport au code OpenC
-
 use Silex\Provider\AssetServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\FormServiceProvider;
@@ -12,9 +8,10 @@ use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\SessionServiceProvider;
 use Silex\Provider\TranslationServiceProvider;
 use Silex\Provider\TwigServiceProvider;
-use silex_openC\src\DAO\ArticleDAO;
-use silex_openC\src\DAO\CommentDAO;
-use silex_openC\src\DAO\UserDAO;
+use Silex\Provider\ValidatorServiceProvider;
+use silex_openC\src\DAO\ArticleDAO; // rajout par rapport au code OpenC
+use silex_openC\src\DAO\CommentDAO; // rajout par rapport au code OpenC
+use silex_openC\src\DAO\UserDAO; // rajout par rapport au code OpenC
 use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
 
@@ -38,6 +35,12 @@ $app->register(new TwigServiceProvider(), ['twig.path' => __DIR__ . '/../views',
  * automatiquement lors de l'enregistrement
  * du fournisseur TwigServiceProvider.
  */
+$app['twig'] = $app->extend('twig', function(Twig_Environment $twig, $app) {
+    $twig->addExtension(new Twig_Extensions_Extension_Text());
+    return $twig;
+});
+$app->register(new ValidatorServiceProvider());
+
 $app->register(new AssetServiceProvider(), ['assets.version' => 'v1'
 ]); // les assets pour les paths assets('home')
 // paramétrages de sécurité
@@ -60,7 +63,7 @@ $app->register(new SecurityServiceProvider(), [
             'form' => [
                 'login_path' => '/login',
                 'check_path' => '/login_check'],
-            'users' => function () use ($app) {
+            'users' => function() use ($app) {
                 return new UserDAO($app['db']);
             },
         ],
@@ -73,6 +76,14 @@ $app->register(new SecurityServiceProvider(), [
         ['^/admin', 'ROLE_ADMIN'],
     ],
 ]);
+// Ajout d'un controleur pour le hashage du mot de passe
+/* $app->get('/hashpwd', function() use ($app) {
+  $rawPassword = 'secret';
+  $salt = '%qUgq3NAYfC1MKwrW?yevbE';
+  $encoder = $app['security.encoder.bcrypt'];
+  return $encoder->encodePassword($rawPassword, $salt);
+  }); */
+
 // Forms
 // Le composant form regroupe les services de gestion des formulaires.
 // Le composant translation offre des services de traduction nécessaires pour utiliser le composant form.

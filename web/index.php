@@ -18,6 +18,8 @@ require __DIR__ . '/../src/Domain/Comment.php'; //rajout par rapport à version 
 require __DIR__ . '/../src/DAO/UserDAO.php'; //rajout par rapport à version OpenC
 require __DIR__ . '/../src/Domain/User.php'; //rajout par rapport à version OpenC
 require __DIR__ . '/../src/Form/Type/CommentType.php'; //rajout par rapport à version OpenC
+require __DIR__ . '/../src/Form/Type/ArticleType.php'; // rajout par rapport au code OpenC
+require __DIR__ . '/../src/Form/Type/UserType.php'; // rajout par rapport au code OpenC
 
 
 $app->run();

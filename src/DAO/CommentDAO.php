@@ -6,6 +6,7 @@ use silex_openC\src\Domain\Comment;
 
 class CommentDAO extends DAO {
 
+//La classe CommentDAO hérite (mot-clé extends) de la classe abstraite DAO
     /**
      * @var \silex_openC\src\DAO\ArticleDAO
      */
@@ -40,6 +41,24 @@ class CommentDAO extends DAO {
             $entities[$id] = $this->buildDomainObject($row);
         }
         return $entities;
+    }
+
+    /**
+     * Retourne un commentaire correspondant a l'ID passé en paramètre
+     *
+     * @param integer $id Le ID du commentaire
+     *
+     * @return \silex_openC\Domain\Comment|retourne une exception si aucun commentaire correspondant n'est trouvé
+     */
+    public function find($id) {
+        $sql = "SELECT * FROM t_comment WHERE com_id=?";
+        $row = $this->getDb()->fetchAssoc($sql, [$id]);
+
+        if ($row) {
+            return $this->buildDomainObject($row);
+        } else {
+            throw new Exception("Pas de commentaire correspondant à l'id " . $id);
+        }
     }
 
     /**
@@ -92,16 +111,11 @@ class CommentDAO extends DAO {
             $article = $this->articleDAO->find($articleId);
             $comment->setArticle($article);
             /**
-             * on ne construit l'article associé au
-             * commentaire que si le champ art_id
-             * est présent dans la ligne de
-             * résultat SQL.
-             * Cela permet  de ne construire
-             * l'objet Article qu'une seule fois
-             * dans la méthode findAllByArticles,
-             * ce qui limite le nombre de requêtes
-             * SQL et améliore donc les
-             * performances de l'application.
+             * on ne construit l'article associé au commentaire que si le champ art_id
+             * est présent dans la ligne de résultat SQL.
+             * Cela permet de ne construire l'objet Article qu'une seule fois
+             * dans la méthode findAllByArticles, ce qui limite le nombre de requêtes
+             * SQL et améliore donc les performances de l'application.
              */
         }
         if (array_key_exists('usr_id', $row)) {
@@ -114,26 +128,22 @@ class CommentDAO extends DAO {
     }
 
     /**
-     * Afin de pouvoir construire complètement une
-     * instance de la classe Comment, la classe
-     * CommentDAO doit pouvoir récupérer un article
-     * à partir de son identifiant et construire
-     * une instance de la classe Article.
-     * Plutôt que d'ajouter cela dans le code
-     * source de CommentDAO, on ajoute dans la
-     * classe ArticleDAO une nouvelle méthode find
-     * définissant le service requis.
-     * La classe CommentDAO a besoin de ce service
-     * pour fonctionner : on dit qu'il existe une
-     * dépendance entre la classe CommentDAO et la
-     * classe ArticleDAO.
-     * Cette dépendance se traduit dans le code
-     * source de CommentDAO par la présence d'une
-     * propriété privée $articleDAO et d'un
-     * accesseur en écriture (mutateur)
+     * Afin de pouvoir construire complètement une instance de la classe Comment, la classe
+     * CommentDAO doit pouvoir récupérer un article à partir de son identifiant et construire
+     * une instance de la classe Article. Plutôt que d'ajouter cela dans le code
+     * source de CommentDAO, on ajoute dans la classe ArticleDAO une nouvelle méthode find
+     * définissant le service requis. La classe CommentDAO a besoin de ce service
+     * pour fonctionner : on dit qu'il existe une dépendance entre la classe CommentDAO et la
+     * classe ArticleDAO. Cette dépendance se traduit dans le code source de CommentDAO par la
+     * présence d'une propriété privée $articleDAO et d'un accesseur en écriture (mutateur)
      * setArticleDAO.
      */
-    // Cette méthode rassemble les valeurs BD dans le tableau$commentData, puis vérifie s'il faut insérer ou mettre à jour le commentaire en se basant sur l'existence d'une valeur pour l'identifiant du commentaire. Ensuite, elle utilise la méthode DBAL appropriée pour effectuer l'opération dans la tablet_comment.
+    /**
+     * Cette méthode rassemble les valeurs BD dans le tableau$commentData, puis vérifie s'il faut
+     * insérer ou mettre à jour le commentaire en se basant sur l'existence d'une valeur pour
+     * l'identifiant du commentaire. Ensuite, elle utilise la méthode DBAL appropriée pour
+     * effectuer l'opération dans la tablet_comment.
+     */
 
     /**
      * Saves a comment into the database
@@ -157,6 +167,51 @@ class CommentDAO extends DAO {
             $id = $this->getDb()->lastInsertId();
             $comment->setId($id);
         }
+    }
+
+    /**
+     * Removes all comments for an article
+     *
+     * @param $articleId The id of the article
+     */
+    public function deleteAllByArticle($articleId) {
+        $this->getDb()->delete('t_comment', ['art_id' => $articleId]);
+    }
+
+    // la suppression d'un article entraîne celle des commentaires associés => cf. ArticleDAO.php
+    // On aurait pu obtenir la suppression automatique des commentaires d'un article en utilisant des contraintes SQL 'ON DELETE CASCADE'
+
+    /**
+     * Supprime un commentaire de la BDD
+     *
+     * @param integer $id Le ID du commentaire
+     */
+    public function delete($id) {
+        // suppression du commentaire
+        $this->getDb()->delete('t_comment', [
+            'com_id' => $id
+        ]);
+    }
+
+    /*
+     * supp tous commentaires liés à 1 utilisateur
+     *
+     * Fichiers liés :
+     * form/UserType.php => formulaire associé à un utilisateur
+     * views/user_form.html.twig => affiche les champs du formulaire UserType.php
+     * views/admin.html.twig => formulaire d'affichage pour la gestion
+     * des utilisateurs - Partie ADMIN
+     * src/DAO/UserDAO.php => Méthodes de modification et de suppression d'un utilisateur
+     * app/routes.php => contrôleurs pour ajout/modif/supp d'un utilisateur
+     */
+
+    /**
+     * Supprimer tous les commentaires du user de la BDD
+     * @param integer $userId le ID du user
+     */
+    public function deleteAllByUser($userId) {
+        // supprimer tous les commentaires du user
+        $this->getDb()->delete('t_comment', ['usr_id' => $userId]);
     }
 
 }

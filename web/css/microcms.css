@@ -11,3 +11,7 @@ body{
 .articleTitle:hover, .articleTitle:focus {
     text-decoration: none;
 }
+.adminTable{ /* Affichage des pages du back-office */
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

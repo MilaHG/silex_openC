@@ -5,6 +5,8 @@
         <group>
             <file>file:/C:/xampp/htdocs/silex_openC/app/routes.php</file>
             <file>file:/C:/xampp/htdocs/silex_openC/app/app.php</file>
+            <file>file:/C:/xampp/htdocs/silex_openC/src/DAO/CommentDAO.php</file>
+            <file>file:/C:/xampp/htdocs/silex_openC/src/DAO/UserDAO.php</file>
             <file>file:/C:/xampp/htdocs/silex_openC/composer.json</file>
             <file>file:/C:/xampp/htdocs/silex_openC/views/index.html.twig</file>
             <file>file:/C:/xampp/htdocs/silex_openC/src/Domain/Article.php</file>
